@@ -74,43 +74,35 @@ int main(void)
 
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD; // Disable watchdog timer
 
-    // Configuring P1.0 as output and P1.1 (switch) as input with pull-up
-    // resistor. Rest of pins are configured as output low.
-    // Notice intentional '=' assignment since all P1 pins are being
-    // deliberately configured
-    P1->DIR = ~(uint8_t) BIT1;      // Sets P1.1 to input direction (Button)
+    P1->DIR = ~(uint8_t) BIT1;      // Sets P1.1 to input direction 
     P1->OUT = BIT1;     // Enable internal resistor
-    P1->REN = BIT1;     // Enable pull-up resistor (P1.1 output high)
-    P1->SEL0 = 0;       // Select bit 0 for MUX; Passes direction register through
+    P1->REN = BIT1;     // Enable pull-up resistor 
+    P1->SEL0 = 0;       // Select bit 0 for MUX
     P1->SEL1 = 0;       // Select bit 1 for MUX
     P1->IES = BIT1;     // Interrupt on high-to-low transition
     P1->IFG = 0;        // Clear all P1 interrupt flags
     P1->IE = BIT1;      // Enable interrupt for P1.1
+    
+    NVIC->ISER[1] = 1 << ((PORT1_IRQn) & 31); // Enable Port 1 interrupt
 
-    // Enable Port 1 interrupt on the NVIC
-    NVIC->ISER[1] = 1 << ((PORT1_IRQn) & 31);
-
-    // Configure Port J
     PJ->DIR |= (BIT0| BIT1 | BIT2 | BIT3);
     PJ->OUT &= ~(BIT0 | BIT1 | BIT2 | BIT3);
 
-    // Enable PCM rude mode, which allows to device to enter LPM3 without waiting for peripherals
-    PCM->CTL1 = PCM_CTL0_KEY_VAL | PCM_CTL1_FORCE_LPM_ENTRY;
+    PCM->CTL1 = PCM_CTL0_KEY_VAL | PCM_CTL1_FORCE_LPM_ENTRY;  // Enable LPM3
 
-    // Enable global interrupt
-    __enable_irq();
+    __enable_irq();  // Enable global interrupt
 
-    // Setting the sleep deep bit
-    SCB->SCR |= (SCB_SCR_SLEEPDEEP_Msk);
+   
+    SCB->SCR |= (SCB_SCR_SLEEPDEEP_Msk);  // Setting the sleep deep bit
 
-    // Do not wake up on exit from ISR
-    SCB->SCR |= SCB_SCR_SLEEPONEXIT_Msk;
+  
+    SCB->SCR |= SCB_SCR_SLEEPONEXIT_Msk;   // Do not wake up on exit from ISR
 
-    // Ensures SLEEPONEXIT takes effect immediately
-    __DSB();
+    
+    __DSB(); // Ensures SLEEPONEXIT takes effect immediately
 
-    // Go to LPM4
-    __sleep();
+ 
+    __sleep();     // Enable to LPM4
 }
 
 /* Port1 ISR */
@@ -118,12 +110,10 @@ void PORT1_IRQHandler(void)
 {
     volatile uint32_t i;
 
-    // Toggling the output on the LED
-    if(P1->IFG & BIT1)
+    if(P1->IFG & BIT1)  // Toggling the output on the LED
         P1->OUT ^= BIT0;
 
-    // Delay for switch debounce
-    for(i = 0; i < 10000; i++)
+    for(i = 0; i < 10000; i++) // Delay 
 
     P1->IFG &= ~BIT1;   // Disable interrupt flag for P1.1
 }
