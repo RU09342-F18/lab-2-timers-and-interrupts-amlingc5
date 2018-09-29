@@ -36,13 +36,13 @@ __interrupt void Port_1(void)
 
         TA0CTL = TACLR; // Clear timer
         TA0CTL = TASSEL_1 + MC_2 + ID_3;    // TimerA0 Control: ACLK, Continuous mode
-        P1IES &= ~BIT1; // Set Interrupt Edge Select (Rising Edge)
+        P1IES &= ~BIT1; // Set Rising Edge Interrupt
     }
 
     else{
         TA0CCR0 = TA0R;
         TA0CTL = TASSEL_1 + MC_1 +ID_3; // TimerA0 Control: ACLK, Up mode
-        P1IES |= BIT1;  // Set Interrupt Edge Select (Falling Edge)
+        P1IES |= BIT1;  // Set Falling Edge Interrupt
     }
 
     P1IFG &= ~BIT1;    // Resets interrupt flag for P1.1
