@@ -1,12 +1,14 @@
+# Chris Amling
+# Lab 2
 # Button Based Delay
-Now that you have begun to familiarize yourself with the TIMER modules, why don't we make an interesting change to our code from the last lab.
+September 28, 2018
 
-## Task
-Setup your microcontroller to initially blink and LED at a rate of 10Hz upon restarting or powering up. Then utilizing one of the buttons on board, a user should be able to set the delay or blinking rate of the LED by holding down a button. The duration in which the button is depressed should then become the new rate at which the LED blinks. As previously stated, you most likely will want to take advantage of the fact that TIMER modules exist and see if you can let them do a bulk of the work for you.
+In the last part of the lab, the task is to get an LED to blink at different rates, based upon how long a button is held down. The boards being used for this part of the lab are the MSP430G2553 and the MSP430F5529.
 
-### Extra Work
-## Reset Button
-What is a piece of electronics without a reset button? Instead of relying on resetting your processor using the built in reset circuitry, why not instead use another button to reset the rate back to 10Hz.
+MSP430G2553
 
-## Button Based Hertz
-Most likely using two buttons, what if instead of making a delay loop based on the time, the user could instead enter a mode where the number of times they pressed the button would become the number in Hz of the blinking rate? How do you think you would implement that with just one button?
+The LED on the board being used is located at P1.6. The code uses the button at P1.3. This code used the msp430.h library.
+
+MSP430F5529
+
+The LED on the board being used is located at P1.0. The code uses the button at P1.1. This code used the msp430.h library.
