@@ -36,7 +36,7 @@ __interrupt void Port_1(void)
 
         TACTL = TACLR;  // Clear Timer
         TACTL = TASSEL_1 + MC_2 + ID_3; // Timer A Control: ACLK, Continuous mode, Internal Divider
-        P1IES &= ~BIT3; // Set Rising EdgeI nterrupt
+        P1IES &= ~BIT3; // Set Rising Edge nterrupt
     }
 
     else{
