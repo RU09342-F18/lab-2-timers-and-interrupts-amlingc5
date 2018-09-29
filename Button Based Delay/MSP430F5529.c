@@ -1,49 +1,47 @@
 #include <msp430.h>
 
-volatile unsigned int TC1 = 0;  // Timer Counter 1 initialized to 0 (Counter for P1.0)
+volatile unsigned int TC1 = 0;  // Timer set to 0
 
 int main(void)
 {
     WDTCTL = WDTPW | WDTHOLD;   // Disable the watchdog timer
 
-    P1DIR |= BIT0;  // Set P1.0 (Red LED) to output
-    P1REN |= BIT1;   // Enable internal resistor
-    P1OUT |= BIT1;   // Connects internal resistor to power (making it a pull-up)
+    P1DIR |= BIT0;  // Set P1.0 to output
+    P1REN |= BIT1;   // Enable internal Resistor
+    P1OUT |= BIT1;   // Enable PUll-up Resistor
 
-    P1IE |= BIT1;    // Set P1.1 as interrupt pin (interrupts are triggered w/ changes to this pin)
-    P1IES |= BIT1;   // Set P1.1 to interrupt on falling edge (high to low transition)
+    P1IE |= BIT1;    // Set P1.1 as interrupt 
+    P1IES |= BIT1;   // Set P1.1 to interrupt on falling edge 
 
     TA0CCTL0 = CCIE;    // Capture Compare Interrupt Enable
-    TA0CCR0 = 100;  // Set Capture Compare Register
-    TA0CTL = TASSEL_1 + MC_1 + ID_3;    // TimerA0 Control: ACLK, Up mode, Divide clock by 8
+    TA0CCR0 = 100;  // Set Register
+    TA0CTL = TASSEL_1 + MC_1 + ID_3;    // TimerA0 Control: ACLK, Up mode
 
 
-    __enable_interrupt();   // Enables interrupt algorithm
+    __enable_interrupt();   // Enables interrupt
 
-    for(;;){};  // Infinite for loop
+    for(;;){};  // continuous loop
 }
 
-// Interrupt service routine for Timer A
 #pragma vector=TIMER0_A0_VECTOR
 __interrupt void Timer0_A0(void)
 {
-    P1OUT ^= BIT0;  // Toggle P1.0 (Red LED ON)
+    P1OUT ^= BIT0;  // Toggle P1.0
 }
 
-// Interrupt service routine for P1
 #pragma vector = PORT1_VECTOR
 __interrupt void Port_1(void)
 {
     if(P1IES & BIT1){   // Port 1 Interrupt Edge Select (Falling Edge)
 
-        TA0CTL = TACLR; // Clear timer settings
-        TA0CTL = TASSEL_1 + MC_2 + ID_3;    // TimerA0 Control: ACLK, Continuous mode, Divide clock by 8
+        TA0CTL = TACLR; // Clear timer
+        TA0CTL = TASSEL_1 + MC_2 + ID_3;    // TimerA0 Control: ACLK, Continuous mode
         P1IES &= ~BIT1; // Set Interrupt Edge Select (Rising Edge)
     }
 
     else{
-        TA0CCR0 = TA0R; // Capture Compare Register gets value of TimerA0
-        TA0CTL = TASSEL_1 + MC_1 +ID_3; // TimerA0 Control: ACLK, Up mode, Divide clock by 8
+        TA0CCR0 = TA0R;
+        TA0CTL = TASSEL_1 + MC_1 +ID_3; // TimerA0 Control: ACLK, Up mode
         P1IES |= BIT1;  // Set Interrupt Edge Select (Falling Edge)
     }
 
